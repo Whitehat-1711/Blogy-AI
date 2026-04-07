@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Sidebar from "./components/Sidebar";
+import BlogGenerationLoader from "./components/BlogGenerationLoader";
 import { useWorkflow } from "./context/WorkflowContext";
 
 const genStyles = `
@@ -534,7 +535,11 @@ export default function BlogGenPage({ activePage = "blog-gen", onNavigate }) {
 
             {/* Center Panel — Blog Preview */}
             <div className="blog-preview-panel">
-              {blogResult?.content ? (
+              {loading.blogGeneration ? (
+                <div className="blog-preview-card">
+                  <BlogGenerationLoader />
+                </div>
+              ) : blogResult?.content ? (
                 <div className="blog-preview-card">
                   {seo && (
                     <div className="blog-score-badge">
@@ -579,7 +584,8 @@ export default function BlogGenPage({ activePage = "blog-gen", onNavigate }) {
                     <div>
                       🔗{" "}
                       <span>
-                        {blogResult.external_links_used || 0} external blogs used
+                        {blogResult.external_links_used || 0} external blogs
+                        used
                       </span>
                     </div>
                   </div>
@@ -680,14 +686,11 @@ export default function BlogGenPage({ activePage = "blog-gen", onNavigate }) {
                   <div className="blog-placeholder">
                     <div className="blog-placeholder-icon">✍️</div>
                     <div className="blog-placeholder-text">
-                      {loading.blogGeneration
-                        ? "Generating your blog..."
-                        : "No blog generated yet"}
+                      No blog generated yet
                     </div>
                     <div className="blog-placeholder-sub">
-                      {loading.blogGeneration
-                        ? "Running keyword clustering, SERP analysis, content generation, SEO optimization, and humanization pipeline..."
-                        : "Fill in the keyword config on the left and hit Generate Blog to start the AI pipeline."}
+                      Fill in the keyword config on the left and hit Generate
+                      Blog to start the AI pipeline.
                     </div>
                   </div>
                 </div>
