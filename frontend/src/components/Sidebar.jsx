@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useWorkflow } from "../context/WorkflowContext";
+import scrapbookLogo from "../assets/scrapbook-logo.png";
 
 const navItems = [
   { id: "journal", label: "Journal", icon: "📝" },
@@ -42,8 +43,8 @@ export default function Sidebar({ activePage = "journal", onNavigate }) {
           padding: 0 4px;
         }
         .sidebar-avatar {
-          width: 40px;
-          height: 40px;
+          width: 54px;
+          height: 54px;
           border-radius: 50%;
           background: #1F2A44;
           border: 2px solid #FFC857;
@@ -61,14 +62,6 @@ export default function Sidebar({ activePage = "journal", onNavigate }) {
           color: #1F2A44;
           margin: 0;
           line-height: 1.2;
-        }
-        .sidebar-logo-text p {
-          font-family: 'Caveat', cursive;
-          font-size: 12px;
-          color: #1F2A44;
-          margin: 0;
-          opacity: 0.7;
-          letter-spacing: 0.5px;
         }
         .sidebar-nav {
           display: flex;
@@ -165,9 +158,9 @@ export default function Sidebar({ activePage = "journal", onNavigate }) {
         <div className="sidebar-logo">
           <div className="sidebar-avatar">
             <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=aryan&backgroundColor=b6e3f4"
+              src={scrapbookLogo}
               style={{ width: "100%", height: "100%" }}
-              alt="avatar"
+              alt="The Scrapbook logo"
               onError={(e) => {
                 e.target.style.display = "none";
                 e.target.parentElement.innerHTML = "🧑";
@@ -176,7 +169,6 @@ export default function Sidebar({ activePage = "journal", onNavigate }) {
           </div>
           <div className="sidebar-logo-text">
             <h2>The Scrapbook</h2>
-            <p>Curated Chaos</p>
           </div>
         </div>
 

@@ -65,6 +65,10 @@ async def _create_indexes():
         await blogs_collection.create_index("user_id")
         await blogs_collection.create_index("created_at")
 
+        users_collection = _db["users"]
+        await users_collection.create_index("email", unique=True)
+        await users_collection.create_index("created_at")
+
         logger.info("📑 Database indexes created")
 
     except Exception as e:

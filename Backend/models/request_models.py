@@ -66,6 +66,17 @@ class HumanizationRequest(BaseModel):
     force: bool = Field(default=False, description="Force humanization even if AI score is low")
 
 
+class SignupRequest(BaseModel):
+    username: str = Field(..., min_length=2, max_length=60)
+    email: str = Field(..., min_length=5, max_length=254)
+    password: str = Field(..., min_length=8, max_length=128)
+
+
+class LoginRequest(BaseModel):
+    email: str = Field(..., min_length=5, max_length=254)
+    password: str = Field(..., min_length=8, max_length=128)
+
+
 class TitleSuggestionsRequest(BaseModel):
     keyword: str = Field(..., min_length=2, description="Primary keyword for title ideas")
     serp_analysis: Optional[SERPAnalysisResponse] = Field(

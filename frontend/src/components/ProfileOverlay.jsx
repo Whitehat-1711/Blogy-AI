@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useWorkflow } from "../context/WorkflowContext";
+import scrapbookLogo from "../assets/scrapbook-logo.png";
 
 const overlayStyles = `
   .profile-overlay-backdrop {
@@ -51,7 +52,7 @@ const overlayStyles = `
   }
 `;
 
-export default function ProfileOverlay({ onClose, onNavigate }) {
+export default function ProfileOverlay({ onClose, onNavigate, onLogout }) {
   const { blogHistory, mongoBlogs, actions } = useWorkflow();
 
   useEffect(() => {
@@ -94,8 +95,8 @@ export default function ProfileOverlay({ onClose, onNavigate }) {
           <div className="profile-left">
             <div className="avatar-wrap">
               <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=aryan&backgroundColor=b6e3f4"
-                alt="avatar"
+                src={scrapbookLogo}
+                alt="The Scrapbook logo"
                 style={{ width: "100%", height: "100%" }}
                 onError={(e) => {
                   e.target.style.display = "none";
@@ -113,6 +114,7 @@ export default function ProfileOverlay({ onClose, onNavigate }) {
             <div className="actions">
               <button className="btn" onClick={() => onNavigate?.("blog-gen")}>New Blog</button>
               <button className="btn secondary" onClick={() => onNavigate?.("humanizer")}>Run Humanizer</button>
+              <button className="btn secondary" onClick={() => onLogout?.()}>Logout</button>
             </div>
           </div>
 

@@ -155,56 +155,67 @@ def compute_seo_score(
 ) -> float:
     """
     Weighted SEO score out of 100.
+    Tuned to avoid under-scoring otherwise solid long-form blogs.
     """
     score = 0.0
 
-    # Word count (20 pts)
-    if word_count >= 2500:
-        score += 20
-    elif word_count >= 1500:
-        score += 14
-    elif word_count >= 800:
-        score += 8
-
-    # Keyword density (20 pts)
-    if 0.5 <= keyword_density <= 2.5:
-        score += 20
-    elif 0.3 <= keyword_density < 0.5 or 2.5 < keyword_density <= 3.5:
-        score += 10
-
-    # Readability (15 pts)
-    if readability_score >= 60:
+    # Word count (15 pts)
+    if word_count >= 2000:
         score += 15
-    elif readability_score >= 50:
-        score += 10
-    elif readability_score >= 40:
-        score += 5
-
-    # Headings (10 pts)
-    if heading_count >= 5:
-        score += 10
-    elif heading_count >= 3:
+    elif word_count >= 1400:
+        score += 12
+    elif word_count >= 1000:
+        score += 9
+    elif word_count >= 700:
         score += 6
-    elif heading_count >= 1:
+
+    # Keyword density (18 pts)
+    if 0.4 <= keyword_density <= 2.8:
+        score += 18
+    elif 0.25 <= keyword_density < 0.4 or 2.8 < keyword_density <= 3.2:
+        score += 12
+    elif keyword_density > 0:
+        score += 6
+
+    # Readability (12 pts)
+    if readability_score >= 55:
+        score += 12
+    elif readability_score >= 45:
+        score += 9
+    elif readability_score >= 35:
+        score += 6
+    else:
         score += 3
 
-    # Keyword in title (15 pts)
-    score += 15 if has_keyword_in_title else 0
+    # Headings (12 pts)
+    if heading_count >= 6:
+        score += 12
+    elif heading_count >= 4:
+        score += 9
+    elif heading_count >= 2:
+        score += 6
+
+    # Keyword in title (14 pts)
+    score += 14 if has_keyword_in_title else 0
 
     # Keyword in first 100 words (10 pts)
     score += 10 if has_keyword_in_first_100 else 0
 
-    # Internal links (5 pts)
-    if internal_link_count >= 3:
-        score += 5
+    # Internal links (9 pts)
+    if internal_link_count >= 4:
+        score += 9
+    elif internal_link_count >= 2:
+        score += 6
     elif internal_link_count >= 1:
-        score += 2
+        score += 4
 
-    # LSI keywords (5 pts)
-    if lsi_count >= 8:
+    # LSI keywords (10 pts)
+    if lsi_count >= 10:
+        score += 10
+    elif lsi_count >= 6:
+        score += 8
+    elif lsi_count >= 3:
         score += 5
-    elif lsi_count >= 4:
-        score += 3
 
     return round(min(score, 100.0), 1)
 

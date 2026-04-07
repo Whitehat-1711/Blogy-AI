@@ -81,5 +81,9 @@ export const api = {
   humanize: {
     run: (payload, options = {}) => request("/humanize", { method: "POST", body: payload, ...options }),
   },
+  auth: {
+    signup: (payload, options = {}) => request("/auth/signup", { method: "POST", body: payload, ...options }),
+    login: (payload, options = {}) => request("/auth/login", { method: "POST", body: payload, ...options }),
+  },
   health: () => request("/health"),
 };

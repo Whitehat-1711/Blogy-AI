@@ -5,6 +5,7 @@ import Sidebar from "./components/Sidebar";
 import ProfileOverlay from "./components/ProfileOverlay";
 import { useWorkflow } from "./context/WorkflowContext";
 import { api } from "./api/client";
+import scrapbookLogo from "./assets/scrapbook-logo.png";
 
 // ── Styles ─────────────────────────────────────────────────────────────────
 const journalStyles = `
@@ -398,7 +399,7 @@ function BlogModal({ blog, onClose }) {
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────
-export default function JournalPage({ activePage = "journal", onNavigate }) {
+export default function JournalPage({ activePage = "journal", onNavigate, onLogout }) {
   const [showProfile, setShowProfile] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const { mongoBlogs, loading, actions } = useWorkflow();
@@ -433,7 +434,7 @@ export default function JournalPage({ activePage = "journal", onNavigate }) {
               <span className="topbar-greeting">hello, welcome back</span>
               <div className="bell-wrap">🔔<div className="bell-dot" /></div>
               <div className="topbar-avatar" onClick={() => setShowProfile((v) => !v)}>
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=aryan&backgroundColor=b6e3f4" style={{width:'100%',height:'100%'}} alt="av" />
+                <img src={scrapbookLogo} style={{width:'100%',height:'100%'}} alt="The Scrapbook logo" />
               </div>
             </div>
           </div>
@@ -544,7 +545,13 @@ export default function JournalPage({ activePage = "journal", onNavigate }) {
         </div>
       </div>
 
-      {showProfile && <ProfileOverlay onClose={() => setShowProfile(false)} onNavigate={onNavigate} />}
+      {showProfile && (
+        <ProfileOverlay
+          onClose={() => setShowProfile(false)}
+          onNavigate={onNavigate}
+          onLogout={onLogout}
+        />
+      )}
 
       {/* Blog Reader Modal */}
       {selectedBlog && <BlogModal blog={selectedBlog} onClose={handleClose} />}
