@@ -83,10 +83,10 @@ def _compute_missing_keywords(keyword: str, page_data: list[dict], coverage_map:
         return candidate_keywords[:8]
 
     expected_space = _expand_expected_keyword_space(keyword, coverage_map)
-    combined_text = " ".join([d.get("text", "") for d in page_data if d.get("text")])
+    combined_text = " ".join([str(d.get("text", "")) for d in page_data if d.get("text")])
     tokens = [t for t in _tokenize_terms(combined_text) if t not in _STOP_WORDS]
     token_freq = Counter(tokens)
-    heading_text = " ".join(h.get("text", "") for d in page_data for h in d.get("headings", []))
+    heading_text = " ".join([str(h.get("text", "")) for d in page_data for h in d.get("headings", [])])
     heading_tokens = set(_tokenize_terms(heading_text))
     competitor_covered = set(k.lower() for k in coverage_map.get("keywords", []))
     competitor_covered.update(heading_tokens)
@@ -100,7 +100,7 @@ def _compute_missing_keywords(keyword: str, page_data: list[dict], coverage_map:
         covered_ratio = sum(1 for t in phrase_tokens if t in competitor_covered) / len(phrase_tokens)
         # Gaps = low absolute coverage and weak distribution in headings/keywords.
         if coverage_score <= 3 or covered_ratio < 0.4:
-            normalized = " ".join(phrase.split())
+            normalized = " ".join([str(x) for x in phrase.split()])
             if normalized and normalized not in gaps:
                 gaps.append(normalized)
 
@@ -128,7 +128,7 @@ def _compute_weak_sections(keyword: str, coverage_map: dict, llm_sections: list[
     if len(sections) >= 3:
         return sections[:6]
 
-    headings_text = " ".join(coverage_map.get("headings", [])).lower()
+    headings_text = " ".join([str(h) for h in coverage_map.get("headings", [])]).lower()
     expected_sections = [
         "Implementation Challenges",
         "Cost and ROI Analysis",
@@ -164,8 +164,8 @@ def _build_content_gap_summary(keyword: str, missing_keywords: list[str], weak_s
         if title and description:
             return {"title": title, "description": description}
 
-    top_kws = ", ".join(missing_keywords[:3])
-    top_sections = ", ".join(weak_sections[:2])
+    top_kws = ", ".join([str(kw) for kw in missing_keywords[:3]])
+    top_sections = ", ".join([str(sec) for sec in weak_sections[:2]])
     return {
         "title": f"The {keyword.title()} Depth Gap",
         "description": (
@@ -266,15 +266,21 @@ async def run_serp_analysis(
 
     # Summarize competitor content for LLM
     competitor_summary = "\n".join([
-        f"Competitor {i+1}: Headings: {', '.join([h['text'][:50] for h in data.get('headings', [])[:3]])} | Keywords: {', '.join(data.get('keywords', [])[:5])}"
-        for i, data in enumerate(page_data[:5]) if data.get('text')
+        f"Competitor {i+1}: Headings: {', '.join([str(h['text'][:40]) for h in data.get('headings', [])[:2]])} | Keywords: {', '.join([str(k) for k in data.get('keywords', [])[:4]])}"
+        for i, data in enumerate(page_data[:4]) if data.get('text')
     ])
 
-    system, user = serp_gap_prompts(keyword, raw_data, page_data, competitor_summary, coverage_map)
+    system, user = serp_gap_prompts(keyword, raw_data[:8], page_data[:4], competitor_summary, coverage_map)
 
     llm_data = {}
     try:
-        llm_data = await chat_completion_json(system, user, temperature=0.3) or {}
+        llm_data = await chat_completion_json(
+            system,
+            user,
+            temperature=0.3,
+            max_tokens=1500,
+            task="serp_analysis",
+        ) or {}
     except Exception as e:
         # Keep pipeline alive with deterministic fallbacks when LLM is unavailable.
         print(f"[SERP] LLM analysis failed, using heuristic fallback: {e}")

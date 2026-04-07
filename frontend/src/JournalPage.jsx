@@ -424,7 +424,6 @@ export default function JournalPage({ activePage = "journal", onNavigate }) {
         <div className="main-content">
           {/* Topbar */}
           <div className="topbar">
-            <span className="badge badge-geo">GEO READY</span>
             <span className="badge badge-seo">SEO ENGINE ON</span>
             <div className="topbar-right">
               <span className="topbar-greeting">hello, welcome back</span>

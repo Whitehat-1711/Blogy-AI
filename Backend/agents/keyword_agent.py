@@ -26,7 +26,13 @@ async def run_keyword_clustering(
     Returns a KeywordClusterResponse with clusters and metadata.
     """
     system, user = keyword_cluster_prompts(seed_keyword, target_location, cluster_count)
-    data = await chat_completion_json(system, user, temperature=0.4)
+    data = await chat_completion_json(
+        system,
+        user,
+        temperature=0.4,
+        max_tokens=1200,
+        task="keyword_cluster",
+    )
 
     clusters = [
         KeywordCluster(

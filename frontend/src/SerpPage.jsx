@@ -280,7 +280,7 @@ export default function SerpPage({ activePage = "strategic-map", onNavigate }) {
         tone: "professional",
         competitor_urls: competitorUrls,
         internal_links: [],
-        enable_humanization: true,
+        enable_humanization: false,
         serp_analysis: analysis,
       };
 

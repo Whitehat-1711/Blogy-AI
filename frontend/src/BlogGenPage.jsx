@@ -232,11 +232,10 @@ export default function BlogGenPage({ activePage = "blog-gen", onNavigate }) {
     keyword: "",
     secondary_keywords: "",
     competitor_urls: "",
-    target_location: "India",
     word_count: 2500,
     tone: "professional",
-    enable_web_search: true,
-    enable_humanization: true,
+    enable_web_search: false,
+    enable_humanization: false,
   });
 
   // Hashnode state
@@ -279,7 +278,6 @@ export default function BlogGenPage({ activePage = "blog-gen", onNavigate }) {
             .filter(Boolean)
         : [],
 
-      target_location: form.target_location,
       word_count: Number(form.word_count) || 2500,
       tone: form.tone,
       enable_web_search: form.enable_web_search,
@@ -436,20 +434,6 @@ export default function BlogGenPage({ activePage = "blog-gen", onNavigate }) {
                       }))
                     }
                     placeholder="comma separated URLs"
-                  />
-                </div>
-
-                <div className="panel-section">
-                  <div className="panel-label">Target Location</div>
-                  <input
-                    className="gen-input"
-                    value={form.target_location}
-                    onChange={(e) =>
-                      setForm((p) => ({
-                        ...p,
-                        target_location: e.target.value,
-                      }))
-                    }
                   />
                 </div>
 

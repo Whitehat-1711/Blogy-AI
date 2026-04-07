@@ -33,7 +33,13 @@ async def run_internal_linking(
         )
 
     system, user = internal_linking_prompts(content, existing_blogs, primary_keyword)
-    llm_data = await chat_completion_json(system, user, temperature=0.3)
+    llm_data = await chat_completion_json(
+        system,
+        user,
+        temperature=0.3,
+        max_tokens=1200,
+        task="internal_linking",
+    )
 
     raw_suggestions = llm_data.get("suggestions", [])
     suggestions = [

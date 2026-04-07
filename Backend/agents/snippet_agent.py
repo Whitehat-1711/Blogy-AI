@@ -74,16 +74,22 @@ async def run_snippet_optimization(
     context = _extract_snippet_section(content)
 
     system, user = snippet_optimization_prompts(keyword, context)
-    llm_data = await chat_completion_json(system, user, temperature=0.3)
+    llm_data = await chat_completion_json(
+        system,
+        user,
+        temperature=0.3,
+        max_tokens=1200,
+        task="snippet",
+    )
 
     paragraph_text = llm_data.get("paragraph_variant", "")
     list_text = llm_data.get("list_variant", "")
     table_text = llm_data.get("table_variant") or ""
 
     # Ensure all variants are strings (LLM might return arrays instead of strings)
-    paragraph_text = " ".join(paragraph_text) if isinstance(paragraph_text, list) else str(paragraph_text or "")
-    list_text = " ".join(list_text) if isinstance(list_text, list) else str(list_text or "")
-    table_text = " ".join(table_text) if isinstance(table_text, list) else str(table_text or "")
+    paragraph_text = " ".join([str(x) for x in paragraph_text]) if isinstance(paragraph_text, list) else str(paragraph_text or "")
+    list_text = " ".join([str(x) for x in list_text]) if isinstance(list_text, list) else str(list_text or "")
+    table_text = " ".join([str(x) for x in table_text]) if isinstance(table_text, list) else str(table_text or "")
 
     paragraph_score = _score_variant(paragraph_text, "paragraph")
     list_score = _score_variant(list_text, "list")

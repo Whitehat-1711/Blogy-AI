@@ -69,7 +69,7 @@ Return valid JSON only."""
 
     # Summarize page data
     page_summary = "\n---\n".join([
-        f"Page {i+1}: {data.get('text', '')[:300]}... | Headings: {', '.join([h['text'] for h in data.get('headings', [])[:3]])} | Keywords: {', '.join(data.get('keywords', [])[:5])}"
+        f"Page {i+1}: {data.get('text', '')[:300]}... | Headings: {', '.join([h['text'] for h in data.get('headings', [])[:3]])} | Keywords: {', '.join([str(k) for k in data.get('keywords', [])[:5]])}"
         for i, data in enumerate(page_data[:5]) if data.get('text')
     ])
 
@@ -85,9 +85,9 @@ DETAILED COMPETITOR DATA:
 {page_summary}
 
 COMPETITOR COVERAGE MAP:
-Headings: {', '.join(coverage_map.get('headings', [])[:10])}
-Keywords: {', '.join(coverage_map.get('keywords', [])[:15])}
-Topics: {', '.join(coverage_map.get('topics', [])[:10])}
+Headings: {', '.join([str(h) for h in coverage_map.get('headings', [])[:10]])}
+Keywords: {', '.join([str(k) for k in coverage_map.get('keywords', [])[:15]])}
+Topics: {', '.join([str(t) for t in coverage_map.get('topics', [])[:10]])}
 
 Analyze and return this exact JSON:
 {{
@@ -233,10 +233,10 @@ def blog_generation_prompts(
 ) -> tuple[str, str]:
 
     # ── Derived values ─────────────────────────────────────────────────────
-    secondary_str = ", ".join(secondary_keywords) if secondary_keywords else "none"
-    gaps_str      = "\n".join(f"- {g}" for g in content_gaps) if content_gaps else "- Use your expertise to identify gaps"
-    comp_gaps_str = "\n".join(f"- {g}" for g in competitor_gaps) if competitor_gaps else "- None specified"
-    missing_kw_str = "\n".join(f"- {kw}" for kw in missing_keywords) if missing_keywords else "- None specified"
+    secondary_str = ", ".join([str(k) for k in secondary_keywords]) if secondary_keywords else "none"
+    gaps_str      = "\n".join(f"- {g}" for g in [str(g) for g in content_gaps]) if content_gaps else "- Use your expertise to identify gaps"
+    comp_gaps_str = "\n".join(f"- {g}" for g in [str(g) for g in competitor_gaps]) if competitor_gaps else "- None specified"
+    missing_kw_str = "\n".join(f"- {kw}" for kw in [str(kw) for kw in missing_keywords]) if missing_keywords else "- None specified"
     il_str        = (
         "\n".join(f"- [{l['title']}]({l['url']})" for l in internal_links)
         if internal_links else "None provided"
@@ -494,7 +494,7 @@ def title_meta_prompts(
 ) -> tuple[str, str]:
     """Generate multiple title + meta description options for A/B testing."""
 
-    secondary_str = ", ".join(secondary_keywords[:5]) if secondary_keywords else "none"
+    secondary_str = ", ".join([str(k) for k in secondary_keywords[:5]]) if secondary_keywords else "none"
 
     system = """You are an SEO copywriter specializing in click-through rate optimization.
 You generate title and meta description variants for A/B testing.
@@ -544,8 +544,8 @@ def outline_generation_prompts(
 ) -> tuple[str, str]:
     """Generate a structured outline before full blog generation — improves coherence."""
 
-    secondary_str = ", ".join(secondary_keywords) if secondary_keywords else "none"
-    gaps_str      = "\n".join(f"- {g}" for g in content_gaps) if content_gaps else "- None specified"
+    secondary_str = ", ".join([str(k) for k in secondary_keywords]) if secondary_keywords else "none"
+    gaps_str      = "\n".join(f"- {g}" for g in [str(g) for g in content_gaps]) if content_gaps else "- None specified"
 
     system = """You are an SEO content strategist.
 You create tight, logical blog outlines that maximize topical authority and reader satisfaction.

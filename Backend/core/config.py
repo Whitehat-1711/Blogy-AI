@@ -13,6 +13,17 @@ if not GROQ_API_KEY:
 GROQ_MODEL: str = "llama-3.3-70b-versatile"
 GROQ_MAX_TOKENS: int = 8000
 GROQ_TEMPERATURE: float = 0.7
+GROQ_MAX_RETRIES: int = int(os.getenv("GROQ_MAX_RETRIES", "1"))
+GROQ_MAX_CONCURRENCY: int = int(os.getenv("GROQ_MAX_CONCURRENCY", "2"))
+
+# ── Gemini (optional fallback/provider routing) ───────────────────────────────
+GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+GEMINI_ENABLED: bool = os.getenv("GEMINI_ENABLED", "true").lower() == "true"
+GEMINI_MODEL_FAST: str = os.getenv("GEMINI_MODEL_FAST", "gemini-2.0-flash")
+
+# ── LLM Routing ────────────────────────────────────────────────────────────────
+LLM_PRIMARY_PROVIDER: str = os.getenv("LLM_PRIMARY_PROVIDER", "groq").lower()
+LLM_FALLBACK_PROVIDER: str = os.getenv("LLM_FALLBACK_PROVIDER", "gemini").lower()
 
 # ── SerpAPI (optional – fallback to scraper if missing) ──────────────────────
 SERPAPI_KEY: str = os.getenv("SERPAPI_KEY", "")

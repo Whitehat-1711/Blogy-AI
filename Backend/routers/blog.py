@@ -84,7 +84,7 @@ async def generate_blog(req: BlogGenerationRequest):
         
         # ── Step 1: Keyword Clustering (Groq LLM) ─────────────────────────────
         keyword_clusters = None
-        if req.enable_serp_analysis:
+        if req.enable_serp_analysis and req.serp_analysis is None:
             try:
                 keyword_clusters = await run_keyword_clustering(
                     seed_keyword=req.keyword,

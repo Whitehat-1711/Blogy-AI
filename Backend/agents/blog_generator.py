@@ -71,10 +71,11 @@ Return the EXPANDED blog only - no explanations:"""
     
     try:
         expanded = await chat_completion(
-            system="You are an expert blog expander who adds depth without changing structure.",
-            user=expansion_prompt,
+            "You are an expert blog expander who adds depth without changing structure.",
+            expansion_prompt,
             temperature=0.7,
-            max_tokens=10000
+            max_tokens=10000,
+            task="content_expansion",
         )
         return expanded
     except Exception as e:
@@ -116,8 +117,7 @@ async def run_blog_generation(
         winning_angle = serp_analysis.winning_angle
         missing_keywords = serp_analysis.missing_keywords
         weak_sections = serp_analysis.weak_sections
-        if word_count < serp_analysis.recommended_word_count:
-            word_count = serp_analysis.recommended_word_count
+        # Don't override user's word_count selection - respect their choice
 
     # Include web search context if available
     if web_search_data:
@@ -154,7 +154,13 @@ async def run_blog_generation(
         web_search_context=web_search_context,  # Include web search data
     )
 
-    content = await chat_completion(system, user, temperature=0.75, max_tokens=8000)
+    content = await chat_completion(
+        system,
+        user,
+        temperature=0.75,
+        max_tokens=8000,
+        task="blog_generation",
+    )
 
     # Remove any word count reporting the model might have added
     content = re.sub(r"\n?word\s+count:\s*\d+\n?", "", content, flags=re.IGNORECASE)
@@ -170,6 +176,9 @@ async def run_blog_generation(
     while actual_word_count < min_acceptable and attempts < max_attempts:
         attempts += 1
         shortfall = word_count - actual_word_count
+        if shortfall < 200:
+            # For small shortfalls we avoid extra LLM calls to keep latency low.
+            break
         print(f"⚠️  Attempt {attempts}: Content is {actual_word_count} words (target: {word_count}, shortfall: {shortfall}). Expanding...")
         content = await expand_content_for_word_count(
             keyword=keyword,
@@ -199,7 +208,13 @@ async def run_blog_generation(
             keyword, extracted_title, target_location
         )
         try:
-            meta_data = await chat_completion_json(t_system, t_user, temperature=0.3)
+            meta_data = await chat_completion_json(
+                t_system,
+                t_user,
+                temperature=0.3,
+                max_tokens=600,
+                task="meta",
+            )
             meta_description = meta_data.get("meta_description", "")
         except Exception:
             meta_description = f"Discover everything about {keyword} in India. Expert guide covering tips, strategies, and tools."

@@ -41,7 +41,13 @@ async def run_humanization(
     flags = ai_detection_result.get("flags", [])
     system, user = humanization_prompts(content, flags)
 
-    humanized = await chat_completion(system, user, temperature=0.85, max_tokens=8000)
+    humanized = await chat_completion(
+        system,
+        user,
+        temperature=0.85,
+        max_tokens=8000,
+        task="humanization",
+    )
 
     # Sometimes LLMs wrap output in code fences; normalize before scoring.
     humanized = humanized.strip()

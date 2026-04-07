@@ -68,7 +68,7 @@ async def run_web_search(
     print(f"✓ Found {len(serp_results)} results")
     
     # Step 2: Fetch page content from top results
-    urls_to_fetch = [r["url"] for r in serp_results[:5]]
+    urls_to_fetch = [r["url"] for r in serp_results[:4]]
     page_contents = await fetch_multiple_pages(urls_to_fetch)
     
     # Step 3: Extract insights if requested
@@ -80,7 +80,7 @@ async def run_web_search(
         try:
             key_insights, trending_topics, statistics = await _extract_insights(
                 keyword=keyword,
-                search_results=serp_results[:5],
+                search_results=serp_results[:4],
                 page_contents=page_contents,
             )
         except Exception as e:
@@ -121,13 +121,13 @@ async def _extract_insights(
     # Format search results for LLM
     results_text = "\n".join([
         f"- {r['title']}: {r['snippet']}"
-        for r in search_results[:5]
+        for r in search_results[:4]
     ])
     
     # Format page content summaries
     content_text = "\n---\n".join([
-        f"Source: {pc.get('url', 'Unknown')}\nContent: {pc.get('text', '')[:500]}"
-        for pc in page_contents[:3]
+        f"Source: {pc.get('url', 'Unknown')}\nContent: {pc.get('text', '')[:300]}"
+        for pc in page_contents[:2]
         if pc.get('text')
     ])
     
@@ -163,7 +163,13 @@ Extract insights in this JSON format:
 }}"""
     
     try:
-        result = await chat_completion_json(system, user, temperature=0.3)
+        result = await chat_completion_json(
+            system,
+            user,
+            temperature=0.3,
+            max_tokens=1200,
+            task="web_insights",
+        )
         
         return (
             result.get("key_insights", [])[:5],
@@ -190,23 +196,24 @@ def format_web_search_context(web_search_data: dict) -> str:
     if web_search_data.get("key_insights"):
         lines.append("Key Insights:")
         for insight in web_search_data["key_insights"][:3]:
-            lines.append(f"- {insight}")
+            lines.append(f"- {str(insight)}")
         lines.append("")
     
     if web_search_data.get("statistics"):
         lines.append("Important Statistics:")
         for stat in web_search_data["statistics"][:3]:
-            lines.append(f"- {stat}")
+            lines.append(f"- {str(stat)}")
         lines.append("")
     
     if web_search_data.get("trending_topics"):
         lines.append("Related Trending Topics:")
-        lines.append(", ".join(web_search_data["trending_topics"][:5]))
+        topics = [str(t) for t in web_search_data["trending_topics"][:5]]
+        lines.append(", ".join(topics))
         lines.append("")
     
     if web_search_data.get("key_sources"):
         lines.append("Primary Sources:")
         for source in web_search_data["key_sources"][:3]:
-            lines.append(f"- {source}")
+            lines.append(f"- {str(source)}")
     
-    return "\n".join(lines)
+    return "\n".join([str(line) for line in lines])
