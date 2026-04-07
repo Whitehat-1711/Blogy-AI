@@ -437,7 +437,7 @@ export default function DashboardPage({ activePage = "resource-pile", onNavigate
             <span className="badge badge-geo">GEO READY</span>
             <span className="badge badge-seo">SEO ENGINE ON</span>
             <div className="topbar-right">
-              <span className="topbar-greeting">Good morning, Aryan ✏️</span>
+              <span className="topbar-greeting">hello, welcome back</span>
               <div className="bell-wrap">🔔<div className="bell-dot" /></div>
               <div className="topbar-avatar" onClick={() => setShowProfile((v) => !v)}>
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=aryan&backgroundColor=b6e3f4" style={{width:'100%',height:'100%'}} alt="av" />

@@ -86,7 +86,8 @@ async def publish_to_hashnode(
     tags_input = ""
     if tags:
         # Tags in Hashnode must be objects with both slug and name fields to create new tags
-        tags_list = ", ".join([f'{{slug: "{escape_graphql_string(tag)}", name: "{escape_graphql_string(tag)}"}}' for tag in tags])
+        # Tag slugs must be lowercase with only letters, numbers, and hyphens
+        tags_list = ", ".join([f'{{slug: "{escape_graphql_string(tag.lower().replace(" ", "-").replace("_", "-"))}", name: "{escape_graphql_string(tag)}"}}' for tag in tags])
         tags_input = f', tags: [{tags_list}]'
     
     # Build featured image input
