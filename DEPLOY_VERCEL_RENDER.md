@@ -42,6 +42,10 @@ This repo includes `render.yaml` for the backend service.
    - Visit `https://blogy-api.onrender.com/health`
    - You should get JSON with `status: "healthy"`.
 
+Important config check for this repo:
+- Do not set Render root directory to `Backend`.
+- Keep it at repo root so startup uses `Backend.core.main:app` exactly as in `render.yaml`.
+
 ---
 
 ## 3) Deploy frontend on Vercel
